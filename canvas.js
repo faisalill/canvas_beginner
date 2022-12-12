@@ -1,5 +1,6 @@
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+const ParticleArray  = []
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -13,25 +14,65 @@ const mouse = {
   y: undefined,
 };
 
-canvas.addEventListener("click", function(event){
-  mouse.x = event.x;
-  mouse.y = event.y;
-  drawCircle()
-});
+// canvas.addEventListener("click", function (event) {
+//   mouse.x = event.x;
+//   mouse.y = event.y;
+// });
 
-canvas.addEventListener('mousemove', function(event){
-    mouse.x = event.x;
-    mouse.y = event.y;
-    drawCircle()
-})
-     
+// canvas.addEventListener("mousemove", function (event) {
+//   mouse.x = event.x;
+//   mouse.y = event.y;
+// });
 
-function drawCircle() {
-  ctx.fillStyle = "white";
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 7;
-  ctx.beginPath();
-  ctx.arc(mouse.x, mouse.y, 100, 0, Math.PI * 2);
-  ctx.fill();
+// function drawCircle() {
+//   ctx.fillStyle = "white";
+//   ctx.lineWidth = 7;
+//   ctx.beginPath();
+//   ctx.arc(mouse.x, mouse.y, 100, 0, Math.PI * 2);
+//   ctx.fill();
+// }
+
+class Particle {
+  constructor() {
+    // this.x = mouse.x;
+    // this.y = mouse.y;
+    this.x = Math.random()*canvas.width
+    this.y = Math.random()*canvas.height
+    this.size = Math.random() * 15 + 1;
+    this.speedX = Math.random() * 3 - 1.5;
+    this.speedY = Math.random() * 3 - 1.5;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.size>1){
+        this.size -= 0.1
+    }
+  }
+  draw() {
+    ctx.fillStyle = "white";
+    ctx.lineWidth = 7;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
-drawCircle()
+function init (){
+    for (let i = 0; i<200; i++){
+        ParticleArray.push(new Particle())
+    }
+}
+init()
+console.log(ParticleArray);
+function particleHandler () {
+    for (let i =0; i< ParticleArray.length-1; i++){
+        ParticleArray[i].update();
+        ParticleArray[i].draw()
+    }
+}
+function animate() {
+  ctx.clearRect(0,0,canvas.width, canvas.height)
+  particleHandler()
+  requestAnimationFrame(animate);
+}
+animate();
